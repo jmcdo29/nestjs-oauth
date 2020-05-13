@@ -9,7 +9,7 @@ export const google = {
 }
 export const JSONHeader = { 'Content-Type': 'application/json' };
 export const oauth = {
-  access: 'access_token',
+  access: 'access_type',
   scope: 'scope',
   response: 'response_type',
   id: 'client_id',

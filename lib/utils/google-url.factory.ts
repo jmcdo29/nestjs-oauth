@@ -1,5 +1,5 @@
+import { google, oauth } from '../oauth.constants';
 import { ServiceOptions } from '../oauth.interface';
-import { google, oauth } from 'lib/oauth.constants';
 
 export const createGoogleLoginUrl = (options: ServiceOptions): string => {
   return `${google.loginUrl}?${oauth.scope}=${options.scope.join(' ')}&${
