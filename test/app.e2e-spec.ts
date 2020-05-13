@@ -1,24 +1,61 @@
+import { config } from 'dotenv';
+config();
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { OauthModule } from '../lib';
+import { waitFor, httpPromise } from './utils';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [
+        OauthModule.forRoot({
+          controller: {
+            root: 'google',
+            callback: '/google/callback',
+            name: 'auth',
+          },
+          service: {
+            scope: ['profile', 'email'],
+            clientId: process.env.GOOGLE_CLIENT,
+            callback: process.env.GOOGLE_CALLBACK,
+            clientSecret: process.env.GOOGLE_SECRET,
+            prompt: 'select_account',
+          },
+          provide: {
+            saveUser: async data => {
+              await waitFor(3000);
+              return data;
+            },
+          },
+        }),
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix('api');
     await app.init();
+    await app.listen(0);
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('oauth calls', () => {
+    let baseUrl: string;
+
+    beforeAll(async () => {
+      baseUrl = await app.getUrl();
+    });
+
+    it('should call for the login URL', async () => {
+      const data = await httpPromise(baseUrl + '/api/auth/google');
+      console.log(data);
+      expect(true);
+    })
   });
 });
