@@ -1,18 +1,32 @@
-import { Module, HttpModule, Get, Query, Controller, HttpService } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpModule,
+  HttpService,
+  Module,
+  Query,
+} from '@nestjs/common';
 import { createConfigurableDynamicRootModule } from '@golevelup/nestjs-modules';
+import {
+  code,
+  loginUrl,
+  OAUTH_MODULE_OPTIONS,
+  service,
+  user,
+} from './oauth.constants';
 import { OauthController } from './oauth.controller';
 import { OauthModuleOptions } from './oauth.interface';
 import { OauthService } from './oauth.service';
 import {
-  serviceLoginFunction,
   serviceGetUserFunction,
+  serviceLoginFunction,
 } from './utils/service-function.factory';
 
 @Module({})
 export class OauthCoreModule extends createConfigurableDynamicRootModule<
   OauthCoreModule,
   OauthModuleOptions[]
->('OAUTH_MODULE_OPTIONS', {
+>(OAUTH_MODULE_OPTIONS, {
   imports: [HttpModule],
   controllers: [OauthController],
   providers: [
@@ -25,28 +39,51 @@ export class OauthCoreModule extends createConfigurableDynamicRootModule<
           OauthController.prototype[
             option.controller.root + option.name
           ] = function() {
-            return this['oauthService'][`getLoginUrl${option.name}`]();
+            return this[service][`${loginUrl}${option.name}`]();
           };
-          OauthController.prototype[option.controller.callback + option.name] =
-            function(code: string) {
-              return this['oauthService'][`getUser${option.name}`](code);
-            }
+          OauthController.prototype[
+            option.controller.callback + option.name
+          ] = function(code: string) {
+            return this[service][`${user}${option.name}`](code);
+          };
           // SERVICE OVERRIDING
-          OauthService.prototype[`getLoginUrl${option.name}`] = function() {
+          OauthService.prototype[`${loginUrl}${option.name}`] = function() {
             return serviceLoginFunction(option.name, option.service);
           };
           OauthService.prototype[
-            `getUser${option.name}`
-          ] = serviceGetUserFunction(option.name, option.service, option.provide, http);
+            `${user}${option.name}`
+          ] = serviceGetUserFunction(
+            option.name,
+            option.service,
+            option.provide,
+            http,
+          );
           // manually calling controller decorators
           Controller(option.controllerRoot)(OauthController);
-          Get(option.controller.root)(OauthController, option.controller.root
-             + option.name, Object.getOwnPropertyDescriptor(OauthController.prototype, `${option.controller.root}${option.name}`));
-          Get(option.controller.callback)(OauthController, option.controller.callback + option.name, Object.getOwnPropertyDescriptor(OauthController.prototype, `${option.controller.callback}${option.name}`));
-          Query('code')(OauthController.prototype, `${option.controller.callback}${option.name}`, 0);
+          Get(option.controller.root)(
+            OauthController,
+            option.controller.root + option.name,
+            Object.getOwnPropertyDescriptor(
+              OauthController.prototype,
+              `${option.controller.root}${option.name}`,
+            ),
+          );
+          Get(option.controller.callback)(
+            OauthController,
+            option.controller.callback + option.name,
+            Object.getOwnPropertyDescriptor(
+              OauthController.prototype,
+              `${option.controller.callback}${option.name}`,
+            ),
+          );
+          Query(code)(
+            OauthController.prototype,
+            `${option.controller.callback}${option.name}`,
+            0,
+          );
         });
       },
-      inject: ['OAUTH_MODULE_OPTIONS', HttpService],
+      inject: [OAUTH_MODULE_OPTIONS, HttpService],
     },
   ],
 }) {}

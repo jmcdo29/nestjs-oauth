@@ -9,6 +9,8 @@ export interface ServiceOptions {
   prompt?: string;
   clientSecret: string;
   callback: string;
+  accessType?: string;
+  responseType?: string;
 }
 
 export interface OauthModuleOptions {

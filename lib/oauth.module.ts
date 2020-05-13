@@ -1,7 +1,7 @@
+import { AsyncModuleConfig } from '@golevelup/nestjs-modules';
 import { Module, DynamicModule } from '@nestjs/common';
 import { OauthCoreModule } from './oauth-core.module';
 import { OauthModuleOptions } from './oauth.interface';
-import { AsyncModuleConfig } from '@golevelup/nestjs-modules';
 
 @Module({})
 export class OauthModule {
