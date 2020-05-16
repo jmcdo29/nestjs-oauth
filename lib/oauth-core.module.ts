@@ -15,17 +15,21 @@ import {
   user,
 } from './oauth.constants';
 import { OauthController } from './oauth.controller';
-import { OauthModuleOptions } from './oauth.interface';
+import {
+  OauthModuleOptions,
+  OauthModuleProviderOptions,
+} from './oauth.interface';
 import { OauthService } from './oauth.service';
 import {
   serviceGetUserFunction,
   serviceLoginFunction,
 } from './utils/service-function.factory';
+import { sanitizeFunctionName } from './utils/sanitize';
 
 @Module({})
 export class OauthCoreModule extends createConfigurableDynamicRootModule<
   OauthCoreModule,
-  OauthModuleOptions[]
+  OauthModuleOptions
 >(OAUTH_MODULE_OPTIONS, {
   imports: [HttpModule],
   controllers: [OauthController],
@@ -33,25 +37,36 @@ export class OauthCoreModule extends createConfigurableDynamicRootModule<
     OauthService,
     {
       provide: 'REDEFINE_FUNCTIONS',
-      useFactory: (options: OauthModuleOptions[], http: HttpService) => {
-        options.forEach((option: OauthModuleOptions) => {
+      useFactory: (options: OauthModuleOptions, http: HttpService) => {
+        Controller(options.controllerRoot)(OauthController);
+        options.authorities.forEach((option: OauthModuleProviderOptions) => {
+          const controllerRootFunction = sanitizeFunctionName(
+            option.controller.root + option.name,
+          );
+          const controllerCallbackFunction = sanitizeFunctionName(
+            option.controller.callback + option.name,
+          );
+          const serviceLoginFuncName = sanitizeFunctionName(
+            loginUrl + option.name,
+          );
+          const serviceCallbackFuncName = sanitizeFunctionName(
+            user + option.name,
+          );
           // CONTROLLER OVERRIDING
-          OauthController.prototype[
-            option.controller.root + option.name
-          ] = function() {
-            return this[service][`${loginUrl}${option.name}`]();
+          OauthController.prototype[controllerRootFunction] = function() {
+            return this[service][serviceLoginFuncName]();
           };
-          OauthController.prototype[
-            option.controller.callback + option.name
-          ] = function(code: string) {
-            return this[service][`${user}${option.name}`](code);
+          OauthController.prototype[controllerCallbackFunction] = function(
+            code: string,
+          ) {
+            return this[service][serviceCallbackFuncName](code);
           };
           // SERVICE OVERRIDING
-          OauthService.prototype[`${loginUrl}${option.name}`] = function() {
+          OauthService.prototype[serviceLoginFuncName] = function() {
             return serviceLoginFunction(option.name, option.service);
           };
           OauthService.prototype[
-            `${user}${option.name}`
+            serviceCallbackFuncName
           ] = serviceGetUserFunction(
             option.name,
             option.service,
@@ -59,13 +74,12 @@ export class OauthCoreModule extends createConfigurableDynamicRootModule<
             http,
           );
           // manually calling controller decorators
-          Controller(option.controllerRoot)(OauthController);
           Get(option.controller.root)(
             OauthController,
             option.controller.root + option.name,
             Object.getOwnPropertyDescriptor(
               OauthController.prototype,
-              `${option.controller.root}${option.name}`,
+              controllerRootFunction,
             ),
           );
           Get(option.controller.callback)(
@@ -73,14 +87,10 @@ export class OauthCoreModule extends createConfigurableDynamicRootModule<
             option.controller.callback + option.name,
             Object.getOwnPropertyDescriptor(
               OauthController.prototype,
-              `${option.controller.callback}${option.name}`,
+              controllerCallbackFunction,
             ),
           );
-          Query(code)(
-            OauthController.prototype,
-            `${option.controller.callback}${option.name}`,
-            0,
-          );
+          Query(code)(OauthController.prototype, controllerCallbackFunction, 0);
         });
       },
       inject: [OAUTH_MODULE_OPTIONS, HttpService],

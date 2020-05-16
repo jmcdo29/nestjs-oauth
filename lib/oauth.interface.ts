@@ -13,12 +13,16 @@ export interface ServiceOptions {
   responseType?: string;
 }
 
-export interface OauthModuleOptions {
+export interface OauthModuleProviderOptions {
   name: OauthProvider;
   controller: ControllerOptions;
   service: ServiceOptions;
-  controllerRoot: string;
   provide: (user: any) => any;
+}
+
+export interface OauthModuleOptions {
+  authorities: OauthModuleProviderOptions[];
+  controllerRoot: string;
 }
 
 export type OauthProvider = 'google' | 'facebook' | 'github' | 'linkedin';

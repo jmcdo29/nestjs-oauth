@@ -13,24 +13,27 @@ describe('AppController (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         OauthModule.forRoot({
-          controller: {
-            root: 'google',
-            callback: '/google/callback',
-            name: 'auth',
-          },
-          service: {
-            scope: ['profile', 'email'],
-            clientId: process.env.GOOGLE_CLIENT,
-            callback: process.env.GOOGLE_CALLBACK,
-            clientSecret: process.env.GOOGLE_SECRET,
-            prompt: 'select_account',
-          },
-          provide: {
-            saveUser: async data => {
-              await waitFor(3000);
-              return data;
+          controllerRoot: 'auth',
+          authorities: [
+            {
+              name: 'google',
+              controller: {
+                root: 'google',
+                callback: '/google/callback',
+              },
+              service: {
+                scope: ['profile', 'email'],
+                clientId: process.env.GOOGLE_CLIENT,
+                callback: process.env.GOOGLE_CALLBACK,
+                clientSecret: process.env.GOOGLE_SECRET,
+                prompt: 'select_account',
+              },
+              provide: async (user: any) => {
+                await waitFor(3000);
+                return user;
+              },
             },
-          },
+          ],
         }),
       ],
     }).compile();
@@ -56,6 +59,6 @@ describe('AppController (e2e)', () => {
       const data = await httpPromise(baseUrl + '/api/auth/google');
       console.log(data);
       expect(true);
-    })
+    });
   });
 });

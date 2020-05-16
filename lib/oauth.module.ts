@@ -5,11 +5,11 @@ import { OauthModuleOptions } from './oauth.interface';
 
 @Module({})
 export class OauthModule {
-  static forRoot(oauthOptions: OauthModuleOptions[]): DynamicModule {
+  static forRoot(oauthOptions: OauthModuleOptions): DynamicModule {
     return OauthCoreModule.forRoot(OauthCoreModule, oauthOptions);
   }
 
-  static forRootAsync(oauthAsyncOptions: AsyncModuleConfig<OauthModuleOptions[]>): DynamicModule {
+  static forRootAsync(oauthAsyncOptions: AsyncModuleConfig<OauthModuleOptions>): DynamicModule {
     return OauthCoreModule.forRootAsync(OauthCoreModule, oauthAsyncOptions);
   }
 }
