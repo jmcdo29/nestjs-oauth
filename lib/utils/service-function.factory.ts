@@ -3,7 +3,6 @@ import { of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { JSONHeader } from '../oauth.constants';
 import { OauthProvider, ServiceOptions } from '../oauth.interface';
-import { createFacebookLoginUrl } from './facebook-url.factory';
 import { createGithubLoginUrl, createGithubUserFunction } from './github-url.factory';
 import {
   createGoogleLoginUrl,
@@ -19,9 +18,6 @@ export const serviceLoginFunction = (
   switch (provider) {
     case 'google':
       url = createGoogleLoginUrl(options);
-      break;
-    case 'facebook':
-      url = createFacebookLoginUrl(options);
       break;
     case 'github':
       url = createGithubLoginUrl(options);
