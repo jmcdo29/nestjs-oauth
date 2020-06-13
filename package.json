@@ -1,10 +1,10 @@
 {
-  "name": "interceptor-redirect",
+  "name": "nestjs-oauth",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
-  "private": true,
-  "license": "UNLICENSED",
+  "description": "An OAuth Module the mimics Passport's functionality without some of passport's wonkiness",
+  "author": "Jay McDoniel <me@jaymcdoniel.dev>",
+  "private": false,
+  "license": "MIT",
   "scripts": {
     "build": "nest build",
     "build:dev": "nest build --path tsconfig.dev.json",

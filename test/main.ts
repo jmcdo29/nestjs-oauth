@@ -18,7 +18,7 @@ const bootstrap = async () => {
       controllerRoot: 'auth',
       authorities: [
         {
-          name: 'google' as const,
+          name: 'google',
           controller: {
             root: 'google',
             callback: '/google/callback',
@@ -33,7 +33,7 @@ const bootstrap = async () => {
           provide: saveUSerClass.saveUser,
         },
         {
-          name: 'github' as const,
+          name: 'github',
           controller: {
             callback: '/github/callback',
             root: 'github'
