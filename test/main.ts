@@ -18,7 +18,7 @@ const bootstrap = async () => {
       controllerRoot: 'auth',
       authorities: [
         {
-          name: 'google',
+          name: 'google' as const,
           controller: {
             root: 'google',
             callback: '/google/callback',
@@ -32,6 +32,21 @@ const bootstrap = async () => {
           },
           provide: saveUSerClass.saveUser,
         },
+        {
+          name: 'github' as const,
+          controller: {
+            callback: '/github/callback',
+            root: 'github'
+          },
+          service: {
+            scope: ['user', 'repo'],
+            clientId: process.env.GITHUB_CLIENT,
+            callback: process.env.GITHUB_CALLBACK,
+            clientSecret: process.env.GITHUB_SECRET,
+            prompt: 'select_account'
+          },
+          provide: saveUSerClass.saveUser,
+        }
       ],
     }),
   );

@@ -1,10 +1,10 @@
 import { HttpService } from '@nestjs/common';
 import { of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { JSONHeader } from '../oauth.constants';
 import { OauthProvider, ServiceOptions } from '../oauth.interface';
 import { createFacebookLoginUrl } from './facebook-url.factory';
-import { createGithubLoginUrl } from './github-url.factory';
+import { createGithubLoginUrl, createGithubUserFunction } from './github-url.factory';
 import {
   createGoogleLoginUrl,
   createGoogleUserFunction,
@@ -49,6 +49,9 @@ export const serviceGetUserFunction = (
       case 'google':
         urlAndOptions = createGoogleUserFunction(options, code);
         break;
+      case 'github':
+        urlAndOptions = createGithubUserFunction(options, code);
+        break;
     }
     return http
       .post(urlAndOptions.url, urlAndOptions.options, {
@@ -56,6 +59,7 @@ export const serviceGetUserFunction = (
       })
       .pipe(
         map(res => res.data),
+        tap(console.log),
         switchMap(accessData =>
           http.get(urlAndOptions.userUrl, {
             headers: {
