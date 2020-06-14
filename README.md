@@ -23,7 +23,7 @@ The `OauthModule` does a lot of magic under the hood when it comes to binding th
 ### OauthModuleOptions
 
 - controllerRoot: string - Sets the `@Controller()` string for the root of the controller
-- authorities: [`OauthModuleProviderOptions](#oauthmoduleprovideroptions)[]` - the array of options for the OAuth module to make use of
+- authorities: [`OauthModuleProviderOptions`](#oauthmoduleprovideroptions)[] - the array of options for the OAuth module to make use of
 
 ### OauthModuleProviderOptions
 
