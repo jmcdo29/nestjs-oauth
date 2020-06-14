@@ -36,17 +36,17 @@ const bootstrap = async () => {
           name: 'github',
           controller: {
             callback: '/github/callback',
-            root: 'github'
+            root: 'github',
           },
           service: {
             scope: ['user', 'repo'],
             clientId: process.env.GITHUB_CLIENT,
             callback: process.env.GITHUB_CALLBACK,
             clientSecret: process.env.GITHUB_SECRET,
-            prompt: 'select_account'
+            prompt: 'select_account',
           },
           provide: saveUSerClass.saveUser,
-        }
+        },
       ],
     }),
   );

@@ -1,4 +1,16 @@
 {
   "singleQuote": true,
-  "trailingComma": "all"
+  "arrowParens": "always",
+  "trailingComma": "all",
+  "overrides": [
+    {
+      "files": "*.md",
+      "options": {
+        "printWidth": 70,
+        "useTabs": false,
+        "trailingComma": "none",
+        "proseWrap": "never"
+      }
+    }
+  ]
 }

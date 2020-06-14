@@ -5,54 +5,82 @@
   "author": "Jay McDoniel <me@jaymcdoniel.dev>",
   "private": false,
   "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jmcdo29/nestjs-oauth.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jmcdo29/nestjs-oauth/issues"
+  },
+  "homepage": "https://github.com/jmcdo29/nestjs-oauth#readme",
   "scripts": {
     "build": "nest build",
     "build:dev": "nest build --path tsconfig.dev.json",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "commit": "git-cz",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"*.md\"",
     "start": "nest start",
     "start:dev": "yarn build:dev && node dist-test/test/main.js",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "preversion": "yarn run format && yarn run lint && yarn build",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
   "dependencies": {
-    "@golevelup/nestjs-modules": "^0.4.0",
+    "@golevelup/nestjs-modules": "^0.4.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-conventional": "^8.3.4",
+    "@nestjs/cli": "^7.0.0",
     "@nestjs/common": "^7.0.0",
     "@nestjs/core": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
-    "@ogma/nestjs-module": "^0.1.0",
-    "@ogma/platform-express": "^0.1.0",
-    "reflect-metadata": "^0.1.13",
-    "rimraf": "^3.0.2",
-    "rxjs": "^6.5.4"
-  },
-  "devDependencies": {
-    "@nestjs/cli": "^7.0.0",
     "@nestjs/schematics": "^7.0.0",
     "@nestjs/testing": "^7.0.0",
+    "@ogma/nestjs-module": "^0.1.0",
+    "@ogma/platform-express": "^0.1.0",
     "@types/express": "^4.17.3",
     "@types/jest": "25.1.4",
     "@types/node": "^13.9.1",
     "@types/supertest": "^2.0.8",
     "@typescript-eslint/eslint-plugin": "^2.23.0",
     "@typescript-eslint/parser": "^2.23.0",
+    "conventional-changelog-cli": "^2.0.31",
+    "cz-conventional-changelog": "^3.1.0",
     "dotenv": "^8.2.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-import": "^2.20.1",
+    "husky": "^4.2.5",
     "jest": "^25.1.0",
+    "lint-staged": "^10.2.9",
     "prettier": "^1.19.1",
+    "rimraf": "^3.0.2",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^6.5.4",
     "supertest": "^4.0.2",
     "ts-jest": "25.2.1",
     "ts-loader": "^6.2.1",
     "ts-node": "^8.6.2",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^3.7.4"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^7.0.0",
+    "@nestjs/core": "^7.0.0",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^6.5.4"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -67,5 +95,25 @@
     },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "eslint --ext ts"
+    ],
+    "*.{md,html,json,js}": [
+      "prettier --write"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

@@ -3,12 +3,14 @@ import { of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { JSONHeader } from '../oauth.constants';
 import { OauthProvider, ServiceOptions } from '../oauth.interface';
-import { createGithubLoginUrl, createGithubUserFunction } from './github-url.factory';
+import {
+  createGithubLoginUrl,
+  createGithubUserFunction,
+} from './github-url.factory';
 import {
   createGoogleLoginUrl,
   createGoogleUserFunction,
 } from './google-url.factory';
-import { createLinkedinLoginUrl } from './linkedin-url.factory';
 
 export const serviceLoginFunction = (
   provider: OauthProvider,
@@ -21,9 +23,6 @@ export const serviceLoginFunction = (
       break;
     case 'github':
       url = createGithubLoginUrl(options);
-      break;
-    case 'linkedin':
-      url = createLinkedinLoginUrl(options);
       break;
   }
   return url;

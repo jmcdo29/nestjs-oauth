@@ -25,4 +25,4 @@ export interface OauthModuleOptions {
   controllerRoot: string;
 }
 
-export type OauthProvider = 'google' | 'facebook' | 'github' | 'linkedin';
+export type OauthProvider = 'google' | 'github';
