@@ -1,6 +1,6 @@
 {
   "name": "nestjs-oauth",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "An OAuth Module the mimics Passport's functionality without some of passport's wonkiness",
   "author": "Jay McDoniel <me@jaymcdoniel.dev>",
   "private": false,
@@ -66,8 +66,8 @@
     "jest": "^25.1.0",
     "lint-staged": "^10.2.9",
     "prettier": "^1.19.1",
-    "rimraf": "^3.0.2",
     "reflect-metadata": "^0.1.13",
+    "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
     "supertest": "^4.0.2",
     "ts-jest": "25.2.1",
