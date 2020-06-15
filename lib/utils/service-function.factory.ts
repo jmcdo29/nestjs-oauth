@@ -1,8 +1,13 @@
 import { HttpService } from '@nestjs/common';
 import { of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { JSONHeader } from '../oauth.constants';
-import { OauthProvider, ServiceOptions } from '../oauth.interface';
+import {
+  OauthProvider,
+  ServiceOptions,
+  GoogleServiceOptions,
+  GithubServiceOptions,
+} from '../oauth.interface';
 import {
   createGithubLoginUrl,
   createGithubUserFunction,
@@ -15,17 +20,17 @@ import {
 export const serviceLoginFunction = (
   provider: OauthProvider,
   options: ServiceOptions,
-): string => {
+): { url: string; provider: string } => {
   let url: string;
   switch (provider) {
     case 'google':
-      url = createGoogleLoginUrl(options);
+      url = createGoogleLoginUrl(options as GoogleServiceOptions);
       break;
     case 'github':
-      url = createGithubLoginUrl(options);
+      url = createGithubLoginUrl(options as GithubServiceOptions);
       break;
   }
-  return url;
+  return { url, provider };
 };
 
 export const serviceGetUserFunction = (
@@ -42,10 +47,16 @@ export const serviceGetUserFunction = (
   const func = (code: string) => {
     switch (provider) {
       case 'google':
-        urlAndOptions = createGoogleUserFunction(options, code);
+        urlAndOptions = createGoogleUserFunction(
+          options as GoogleServiceOptions,
+          code,
+        );
         break;
       case 'github':
-        urlAndOptions = createGithubUserFunction(options, code);
+        urlAndOptions = createGithubUserFunction(
+          options as GithubServiceOptions,
+          code,
+        );
         break;
     }
     return http
@@ -53,17 +64,16 @@ export const serviceGetUserFunction = (
         headers: { ...JSONHeader },
       })
       .pipe(
-        map(res => res.data),
-        tap(console.log),
-        switchMap(accessData =>
+        map((res) => res.data),
+        switchMap((accessData) =>
           http.get(urlAndOptions.userUrl, {
             headers: {
               Authorization: `Bearer ${accessData.access_token}`,
             },
           }),
         ),
-        map(userData => userData.data),
-        switchMap(user => of(service(user))),
+        map((userData) => userData.data),
+        switchMap((user) => of(service(user))),
       );
   };
   return func;

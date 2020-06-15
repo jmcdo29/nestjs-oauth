@@ -1,24 +1,57 @@
+import { CanActivate, NestInterceptor } from '@nestjs/common';
+
 export interface ControllerOptions {
-  root: string;
-  callback: string;
+  root: {
+    path: string;
+    guards?: (CanActivate | Function)[];
+  };
+  callback: {
+    path: string;
+    interceptors?: (NestInterceptor<any, any> | Function)[];
+  };
 }
 
 export interface ServiceOptions {
-  scope: string[];
+  scope?: string[];
   clientId: string;
   prompt?: string;
   clientSecret: string;
-  callback: string;
-  accessType?: string;
-  responseType?: string;
+  callbackUrl?: string;
+  state?: string;
 }
 
-export interface OauthModuleProviderOptions {
-  name: OauthProvider;
+export interface GoogleServiceOptions extends ServiceOptions {
+  scope: string[];
+  callbackUrl: string;
+  accessType?: string;
+  responseType?: string;
+  includeGrantedScopes?: boolean;
+  loginHint?: string;
+}
+
+export interface GithubServiceOptions extends ServiceOptions {
+  login?: string;
+  allowSignup?: boolean;
+}
+
+interface OauthModuleOptionsBase {
   controller: ControllerOptions;
-  service: ServiceOptions;
   provide: (user: any) => any;
 }
+
+interface GoogleOauthModuleOptions extends OauthModuleOptionsBase {
+  name: 'google';
+  service: GoogleServiceOptions;
+}
+
+interface GithubOauthModuleOptions extends OauthModuleOptionsBase {
+  name: 'github';
+  service: GithubServiceOptions;
+}
+
+export type OauthModuleProviderOptions =
+  | GoogleOauthModuleOptions
+  | GithubOauthModuleOptions;
 
 export interface OauthModuleOptions {
   authorities: OauthModuleProviderOptions[];

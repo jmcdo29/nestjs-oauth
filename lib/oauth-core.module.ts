@@ -5,6 +5,8 @@ import {
   HttpService,
   Module,
   Query,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { createConfigurableDynamicRootModule } from '@golevelup/nestjs-modules';
 import {
@@ -21,18 +23,20 @@ import {
 } from './oauth.interface';
 import { OauthService } from './oauth.service';
 import {
+  getLength,
+  sanitizeFunctionName,
   serviceGetUserFunction,
   serviceLoginFunction,
-} from './utils/service-function.factory';
-import { sanitizeFunctionName } from './utils/sanitize';
+} from './utils';
 
-@Module({})
+@Module({
+  imports: [HttpModule],
+  controllers: [OauthController],
+})
 export class OauthCoreModule extends createConfigurableDynamicRootModule<
   OauthCoreModule,
   OauthModuleOptions
 >(OAUTH_MODULE_OPTIONS, {
-  imports: [HttpModule],
-  controllers: [OauthController],
   providers: [
     OauthService,
     {
@@ -41,10 +45,10 @@ export class OauthCoreModule extends createConfigurableDynamicRootModule<
         Controller(options.controllerRoot)(OauthController);
         options.authorities.forEach((option: OauthModuleProviderOptions) => {
           const controllerRootFunction = sanitizeFunctionName(
-            option.controller.root + option.name,
+            option.controller.root.path + option.name,
           );
           const controllerCallbackFunction = sanitizeFunctionName(
-            option.controller.callback + option.name,
+            option.controller.callback.path + option.name,
           );
           const serviceLoginFuncName = sanitizeFunctionName(
             loginUrl + option.name,
@@ -73,24 +77,46 @@ export class OauthCoreModule extends createConfigurableDynamicRootModule<
             option.provide,
             http,
           );
-          // manually calling controller decorators
-          Get(option.controller.root)(
+          // Manually calling controller decorators.
+          Get(option.controller.root.path)(
             OauthController,
-            option.controller.root + option.name,
+            controllerRootFunction,
             Object.getOwnPropertyDescriptor(
               OauthController.prototype,
               controllerRootFunction,
             ),
           );
-          Get(option.controller.callback)(
+          // Add guards to controller login function.
+          if (getLength(option.controller.root.guards)) {
+            UseGuards(...option.controller.root.guards)(
+              OauthController,
+              controllerRootFunction,
+              Object.getOwnPropertyDescriptor(
+                OauthController.prototype,
+                controllerRootFunction,
+              ),
+            );
+          }
+          Get(option.controller.callback.path)(
             OauthController,
-            option.controller.callback + option.name,
+            controllerCallbackFunction,
             Object.getOwnPropertyDescriptor(
               OauthController.prototype,
               controllerCallbackFunction,
             ),
           );
           Query(code)(OauthController.prototype, controllerCallbackFunction, 0);
+          // Add interceptors to controller callback function.
+          if (getLength(option.controller.callback.interceptors)) {
+            UseInterceptors(...option.controller.callback.interceptors)(
+              OauthController,
+              controllerCallbackFunction,
+              Object.getOwnPropertyDescriptor(
+                OauthController.prototype,
+                controllerCallbackFunction,
+              ),
+            );
+          }
         });
       },
       inject: [OAUTH_MODULE_OPTIONS, HttpService],

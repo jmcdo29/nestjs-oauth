@@ -20,13 +20,17 @@ const bootstrap = async () => {
         {
           name: 'google',
           controller: {
-            root: 'google',
-            callback: '/google/callback',
+            root: {
+              path: 'google',
+            },
+            callback: {
+              path: '/google/callback',
+            },
           },
           service: {
             scope: ['profile', 'email'],
             clientId: process.env.GOOGLE_CLIENT,
-            callback: process.env.GOOGLE_CALLBACK,
+            callbackUrl: process.env.GOOGLE_CALLBACK,
             clientSecret: process.env.GOOGLE_SECRET,
             prompt: 'select_account',
           },
@@ -35,13 +39,17 @@ const bootstrap = async () => {
         {
           name: 'github',
           controller: {
-            callback: '/github/callback',
-            root: 'github',
+            callback: {
+              path: '/github/callback',
+            },
+            root: {
+              path: 'github',
+            },
           },
           service: {
             scope: ['user', 'repo'],
             clientId: process.env.GITHUB_CLIENT,
-            callback: process.env.GITHUB_CALLBACK,
+            callbackUrl: process.env.GITHUB_CALLBACK,
             clientSecret: process.env.GITHUB_SECRET,
             prompt: 'select_account',
           },
