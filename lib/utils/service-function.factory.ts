@@ -59,12 +59,16 @@ export const serviceGetUserFunction = (
         );
         break;
     }
+    let tokenData: Record<string, any>;
     return http
       .post(urlAndOptions.url, urlAndOptions.options, {
         headers: { ...JSONHeader },
       })
       .pipe(
-        map((res) => res.data),
+        map((res) => {
+          tokenData = res.data;
+          return tokenData;
+        }),
         switchMap((accessData) =>
           http.get(urlAndOptions.userUrl, {
             headers: {
@@ -73,7 +77,7 @@ export const serviceGetUserFunction = (
           }),
         ),
         map((userData) => userData.data),
-        switchMap((user) => of(service(user))),
+        switchMap((user) => of(service({ ...tokenData, ...user }))),
       );
   };
   return func;
