@@ -2,9 +2,23 @@ import { github, oauth } from '../oauth.constants';
 import { GithubServiceOptions } from '../oauth.interface';
 
 export const createGithubLoginUrl = (options: GithubServiceOptions): string => {
-  return `${github.loginUrl}?${oauth.scope}=${options.scope.join(' ')}&${
-    oauth.id
-  }=${options.clientId}&${oauth.redirect}=${options.callbackUrl}`;
+  let queryString = `${oauth.id}=${options.clientId}`;
+  if (options?.scope.length) {
+    queryString += `&${oauth.scope}=${options.scope.join(' ')}`;
+  }
+  if (options.login) {
+    queryString += `&login=${options.login}`;
+  }
+  if (options.callbackUrl) {
+    queryString += `&${oauth.redirect}=${options.callbackUrl}`;
+  }
+  if (options.state) {
+    queryString += `&${oauth.state}=${options.state}`;
+  }
+  if (options.allowSignup !== null && options.allowSignup !== undefined) {
+    queryString += `&allow_signup=${options.allowSignup}`;
+  }
+  return `${github.loginUrl}?${queryString}`;
 };
 
 export const createGithubUserFunction = (
@@ -18,6 +32,7 @@ export const createGithubUserFunction = (
       client_secret: options.clientSecret,
       code,
       redirect_uri: options.callbackUrl,
+      state: options.state,
     },
     userUrl: github.userUrl,
   };

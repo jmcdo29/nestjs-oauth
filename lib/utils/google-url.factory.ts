@@ -14,7 +14,10 @@ export const createGoogleLoginUrl = (options: GoogleServiceOptions): string => {
   if (options.responseType) {
     queryString += `&${oauth.response}=${options.responseType}`;
   }
-  if (options.includeGrantedScopes) {
+  if (
+    options.includeGrantedScopes !== null &&
+    options.includeGrantedScopes !== undefined
+  ) {
     queryString += `&${oauth.includeScopes}=${options.includeGrantedScopes}`;
   }
   if (options.loginHint) {
