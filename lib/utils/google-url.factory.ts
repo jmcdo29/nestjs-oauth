@@ -2,14 +2,28 @@ import { google, oauth } from '../oauth.constants';
 import { GoogleServiceOptions } from '../oauth.interface';
 
 export const createGoogleLoginUrl = (options: GoogleServiceOptions): string => {
-  return `${google.loginUrl}?${oauth.scope}=${options.scope.join(' ')}&${
-    oauth.access
-  }=${options.accessType || 'online'}&${
-    oauth.response
-  }=${options.responseType || 'code'}&${oauth.redirect}=${
-    options.callbackUrl
-  }&${oauth.id}=${options.clientId}&${oauth.prompt}=${options.prompt ||
-    'select_account'}`;
+  let queryString = `${oauth.scope}=${options.scope.join(' ')}`;
+  queryString += `&${oauth.id}=${options.clientId}`;
+  queryString += `&${oauth.redirect}=${options.callbackUrl}`;
+  if (options.accessType) {
+    queryString += `&${oauth.access}=${options.accessType}`;
+  }
+  if (options.prompt) {
+    queryString += `&${oauth.prompt}=${options.prompt}`;
+  }
+  if (options.responseType) {
+    queryString += `&${oauth.response}=${options.responseType}`;
+  }
+  if (options.includeGrantedScopes) {
+    queryString += `&${oauth.includeScopes}=${options.includeGrantedScopes}`;
+  }
+  if (options.loginHint) {
+    queryString += `&${oauth.loginHint}=${options.loginHint}`;
+  }
+  if (options.state) {
+    queryString += `&${oauth.state}=${options.state}`;
+  }
+  return `${google.loginUrl}?${queryString}`;
 };
 
 export const createGoogleUserFunction = (
