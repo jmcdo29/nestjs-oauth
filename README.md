@@ -32,14 +32,14 @@ This object dictates much of how the `OauthModule` operates under the hood. The 
 - name: `'google' | 'github'` - the name of the OAuth Provider. Currently only GitHub and Google are supported.
 - controller: [`ControllerOptions`](#controlleroptions) - options specific to the controller class
 - service: [`ServiceOptions`](#serviceoptions) - options specific to the service class
-- provide: `(user: any) => any` - a function to determine how to handle the returned user from the OAuth callout. This function can come from a class or can be a direct function.
+- provide: `(user: any) => any` - a function to determine how to handle the returned user from the OAuth callout. This function can come from a class or can be a direct function. Part of the `user` parameter is the token information retrieved from the token call (the OAuth callback) and the other part is the user information retrieved from the identity endpoint provided by the OAuth authority.
 
 ### ControllerOptions
 
 The object that dictates how the Controller class for the `OauthModule`.
 
-- root: string - used in conjunction with the `controllerRoot` property to set the path for the oauth login route. e.g. `/<globalPrefix>/<controllerRoot>/<root>` or `/api/auth/google`
-- callback: string - used to create the callback route for the current authority. Like the `root` option, takes into account the `controllerRoot` and any global prefix already in use. e.g. `/<globalPrefix>/<controllerRoot>/<callback>` or `/api/auth/google/callback` (in this case `callback` is `/google/callback`)
+- root: { path: string, guards: [CanActivate | Function] } - used in conjunction with the `controllerRoot` property to set the path for the oauth login route. e.g. `/<globalPrefix>/<controllerRoot>/<root>` or `/api/auth/google`. The `path` option is what sets the endpoint and the `guards` are passed into the `@UseGuards()` decorator, if there are any there.
+- callback: { path: string, interceptors: [NestInterceptor | Function] } - used to create the callback route for the current authority. Like the `root` option, takes into account the `controllerRoot` and any global prefix already in use. e.g. `/<globalPrefix>/<controllerRoot>/<callback>` or `/api/auth/google/callback` (in this case `callback` is `/google/callback`). Similar to the `root` property, `path` is used for the endpoint and `interceptors` are added to `@UseInterceptors()` if the array has any values in it.
 
 ### ServiceOptions
 
@@ -48,6 +48,11 @@ The object that dictates how the Controller class for the `OauthModule`.
 - clientSecret: string - the client secret for the authority you are using
 - callback: string - the callback url for the authority. This should match the `controller.callback` property, but should be a fully qualified URL instead of an endpoint path e.g. `http://localhost:3000/api/auth/google/callback`
 - prompt: string - the kind of prompt to use with the oauth flow, is a prompt is supported.
+- state: string - a state tracking token to know that the return of the OAuth call comes from the expected server.
+
+#### Specific Providers
+
+Each specific OAuth authority has their own provider values. These follow the values expected from the provider's OAuth documentation, usually changed from snake_case to camelCase. Intellisense should provide you with the options necessary. [Otherwise, you can look here](./lib/oauth.interface.ts)
 
 ## How it works
 
