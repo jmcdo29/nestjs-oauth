@@ -1,3 +1,15 @@
+# [0.2.0](https://github.com/jmcdo29/nestjs-oauth/compare/0.1.0...0.2.0) (2020-06-16)
+
+### Features
+
+- **github:** updates the github oauth login url flow ([aaa105b](https://github.com/jmcdo29/nestjs-oauth/commit/aaa105be2ac7544fcaf7925ef062584155dd7365))
+- adds ability to use guards on login route and interceptors on cb ([175501c](https://github.com/jmcdo29/nestjs-oauth/commit/175501cabc14a43e6770a27d1a027eebd3c2d170))
+- updates types to allow for better dev experience ([fa50bf7](https://github.com/jmcdo29/nestjs-oauth/commit/fa50bf7140bb5f326ae393121322f317ecc094af))
+
+### BREAKING CHANGES
+
+- The `OauthModuleOptions` have been updated in the `controller` and `service` objects. In the `controller` object, each route is now a `path` and `guards` or `interceptors` property, and the `service` now is specific to each provider.
+
 # 0.1.0 (2020-06-14)
 
 ### Bug Fixes
