@@ -1,18 +1,26 @@
-import { CanActivate, NestInterceptor } from '@nestjs/common';
+import {
+  CanActivate,
+  ExceptionFilter,
+  NestInterceptor,
+  PipeTransform,
+} from '@nestjs/common';
 
 /**
  * G E N E R A L   I N T E R F A C E S
  */
 
+export interface RouteOptions {
+  path: string;
+  pipes?: (PipeTransform | Function)[];
+  guards?: (CanActivate | Function)[];
+  interceptors?: (NestInterceptor | Function)[];
+  filters?: (ExceptionFilter | Function)[];
+  decorators?: MethodDecorator[];
+}
+
 export interface ControllerOptions {
-  root: {
-    path: string;
-    guards?: (CanActivate | Function)[];
-  };
-  callback: {
-    path: string;
-    interceptors?: (NestInterceptor<any, any> | Function)[];
-  };
+  root: RouteOptions;
+  callback: RouteOptions;
 }
 
 export interface ServiceOptions {
