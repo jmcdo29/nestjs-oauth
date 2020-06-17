@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/common';
-import { of } from 'rxjs';
+import { from } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { JSONHeader } from '../oauth.constants';
 import {
@@ -77,7 +77,13 @@ export const serviceGetUserFunction = (
           }),
         ),
         map((userData) => userData.data),
-        switchMap((user) => of(service({ ...tokenData, ...user }))),
+        switchMap((user) => {
+          const retVal = service({ ...tokenData, ...user });
+          if (retVal.pipe) {
+            return retVal;
+          }
+          return from(retVal);
+        }),
       );
   };
   return func;
