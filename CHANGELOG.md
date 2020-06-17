@@ -1,3 +1,9 @@
+## [0.2.1](https://github.com/jmcdo29/nestjs-oauth/compare/0.2.0...0.2.1) (2020-06-17)
+
+### Bug Fixes
+
+- allows for the use of a function that returns an observable ([93d1418](https://github.com/jmcdo29/nestjs-oauth/commit/93d1418b84e8c68e8f4f625fe71c92cab313e939))
+
 # [0.2.0](https://github.com/jmcdo29/nestjs-oauth/compare/0.1.0...0.2.0) (2020-06-16)
 
 ### Features
