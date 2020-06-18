@@ -34,7 +34,7 @@ export interface ServiceOptions {
 
 interface OauthModuleOptionsBase {
   controller: ControllerOptions;
-  provide: (user: any) => any;
+  provide: (resp: { user: any; req: any }) => any;
 }
 
 /**
@@ -62,7 +62,7 @@ export interface GoogleUser {
 interface GoogleOauthModuleOptions extends OauthModuleOptionsBase {
   name: 'google';
   service: GoogleServiceOptions;
-  provide: (user: GoogleUser) => any;
+  provide: (resp: { user: GoogleUser; req: any }) => any;
 }
 
 /**
@@ -84,7 +84,7 @@ export interface GithubUser {
 interface GithubOauthModuleOptions extends OauthModuleOptionsBase {
   name: 'github';
   service: GithubServiceOptions;
-  provide: (user: GithubUser) => any;
+  provide: (resp: { user: GithubUser; req: any }) => any;
 }
 
 /**
@@ -101,3 +101,14 @@ export interface OauthModuleOptions {
 }
 
 export type OauthProvider = 'google' | 'github';
+
+export interface OauthCodeInterface {
+  code: string;
+  state?: string;
+}
+
+export interface GoogleOauthCode extends OauthCodeInterface {
+  scope: string;
+  authUser: string;
+  prompt: string;
+}

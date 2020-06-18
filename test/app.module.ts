@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { OgmaModule, OgmaSkip } from '@ogma/nestjs-module';
+import { ExpressParser } from '@ogma/platform-express';
 import { OauthModule } from '../lib';
 import { waitFor } from './utils';
 
@@ -20,6 +22,7 @@ async function saveUser(user: any) {
             },
             callback: {
               path: '/google/callback',
+              decorators: [OgmaSkip()],
             },
           },
           service: {
@@ -29,6 +32,7 @@ async function saveUser(user: any) {
             clientSecret: process.env.GOOGLE_SECRET,
             prompt: 'select_account',
             responseType: 'code',
+            state: 'some google state token',
           },
           provide: saveUser,
         },
@@ -48,10 +52,21 @@ async function saveUser(user: any) {
             callbackUrl: process.env.GITHUB_CALLBACK,
             clientSecret: process.env.GITHUB_SECRET,
             prompt: 'select_account',
+            state: 'some github state token',
           },
           provide: saveUser,
         },
       ],
+    }),
+    OgmaModule.forRoot({
+      service: {
+        color: true,
+        json: false,
+        application: 'Oauth',
+      },
+      interceptor: {
+        http: ExpressParser,
+      },
     }),
   ],
 })

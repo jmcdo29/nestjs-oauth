@@ -18,13 +18,17 @@ describe('AppController (e2e)', () => {
             {
               name: 'google',
               controller: {
-                root: 'google',
-                callback: '/google/callback',
+                root: {
+                  path: 'google',
+                },
+                callback: {
+                  path: '/google/callback',
+                },
               },
               service: {
                 scope: ['profile', 'email'],
                 clientId: process.env.GOOGLE_CLIENT,
-                callback: process.env.GOOGLE_CALLBACK,
+                callbackUrl: process.env.GOOGLE_CALLBACK,
                 clientSecret: process.env.GOOGLE_SECRET,
                 prompt: 'select_account',
               },

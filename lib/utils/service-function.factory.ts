@@ -1,12 +1,13 @@
-import { HttpService } from '@nestjs/common';
+import { ForbiddenException, HttpService } from '@nestjs/common';
 import { from } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { JSONHeader } from '../oauth.constants';
 import {
+  GithubServiceOptions,
+  GoogleServiceOptions,
+  OauthCodeInterface,
   OauthProvider,
   ServiceOptions,
-  GoogleServiceOptions,
-  GithubServiceOptions,
 } from '../oauth.interface';
 import {
   createGithubLoginUrl,
@@ -36,7 +37,7 @@ export const serviceLoginFunction = (
 export const serviceGetUserFunction = (
   provider: OauthProvider,
   options: ServiceOptions,
-  service: (user: any) => any,
+  service: (resp: { user: Record<any, any>; req: any }) => any,
   http: HttpService,
 ): any => {
   let urlAndOptions: {
@@ -44,20 +45,27 @@ export const serviceGetUserFunction = (
     options: Record<string, any>;
     userUrl: string;
   };
-  const func = (code: string) => {
+  const func = (oauthResp: OauthCodeInterface, req: any) => {
     switch (provider) {
       case 'google':
         urlAndOptions = createGoogleUserFunction(
           options as GoogleServiceOptions,
-          code,
+          oauthResp.code,
         );
         break;
       case 'github':
         urlAndOptions = createGithubUserFunction(
           options as GithubServiceOptions,
-          code,
+          oauthResp.code,
         );
         break;
+    }
+    if (options.state) {
+      if (options.state !== oauthResp.state) {
+        throw new ForbiddenException(
+          `Expected a state value of ${options.state} but instead got ${oauthResp.state}`,
+        );
+      }
     }
     let tokenData: Record<string, any>;
     return http
@@ -78,7 +86,7 @@ export const serviceGetUserFunction = (
         ),
         map((userData) => userData.data),
         switchMap((user) => {
-          const retVal = service({ ...tokenData, ...user });
+          const retVal = service({ user: { ...tokenData, ...user }, req });
           if (retVal.pipe) {
             return retVal;
           }
