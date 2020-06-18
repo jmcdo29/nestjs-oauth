@@ -32,14 +32,18 @@ This object dictates much of how the `OauthModule` operates under the hood. The 
 - name: `'google' | 'github'` - the name of the OAuth Provider. Currently only GitHub and Google are supported.
 - controller: [`ControllerOptions`](#controlleroptions) - options specific to the controller class
 - service: [`ServiceOptions`](#serviceoptions) - options specific to the service class
-- provide: `(user: any) => any` - a function to determine how to handle the returned user from the OAuth callout. This function can come from a class or can be a direct function. Part of the `user` parameter is the token information retrieved from the token call (the OAuth callback) and the other part is the user information retrieved from the identity endpoint provided by the OAuth authority.
+- provide: `(resp: {user: Record<any, any>, req: any }) => any` - a function to determine how to handle the returned user from the OAuth callout. This function can come from a class or can be a direct function. Part of the `user` parameter is the token information retrieved from the token call (the OAuth callback) and the other part is the user information retrieved from the identity endpoint provided by the OAuth authority. The Request object is also accessible for the case of wanting to set headers or cookies through packages similar to [`@nestjsplus/cookies`](https://github.com/nestjsplus/cookies).
 
 ### ControllerOptions
 
-The object that dictates how the Controller class for the `OauthModule`.
+The object that dictates how the Controller class for the `OauthModule`. Both `root` and `callback` have the same interface, and require the same values as shown below:
 
-- root: { path: string, guards: [CanActivate | Function] } - used in conjunction with the `controllerRoot` property to set the path for the oauth login route. e.g. `/<globalPrefix>/<controllerRoot>/<root>` or `/api/auth/google`. The `path` option is what sets the endpoint and the `guards` are passed into the `@UseGuards()` decorator, if there are any there.
-- callback: { path: string, interceptors: [NestInterceptor | Function] } - used to create the callback route for the current authority. Like the `root` option, takes into account the `controllerRoot` and any global prefix already in use. e.g. `/<globalPrefix>/<controllerRoot>/<callback>` or `/api/auth/google/callback` (in this case `callback` is `/google/callback`). Similar to the `root` property, `path` is used for the endpoint and `interceptors` are added to `@UseInterceptors()` if the array has any values in it.
+- path: string - the location for the route to be bound
+- guards: Array<CanActivate> - guards to run on the route
+- pipes: Array<PipeTransform> - pipes to run on the route
+- interceptors: Array<NestInterceptor> - interceptors to run on the route
+- filters: Array<ExceptionFilter> - filters to run on the route
+- decorators: Array<MethodDecorators> - decorators to apply to the route. This is specifically added for things like `@OgmaSkip()` or `@Throttle()` though can be used with `@UsePipes()` and the rest of the Nest enhancer decorators if preferred.
 
 ### ServiceOptions
 
@@ -49,6 +53,8 @@ The object that dictates how the Controller class for the `OauthModule`.
 - callback: string - the callback url for the authority. This should match the `controller.callback` property, but should be a fully qualified URL instead of an endpoint path e.g. `http://localhost:3000/api/auth/google/callback`
 - prompt: string - the kind of prompt to use with the oauth flow, is a prompt is supported.
 - state: string - a state tracking token to know that the return of the OAuth call comes from the expected server.
+
+> **NOTE**: if a state token is passed as a parameter, the `OauthService` method will check the returned state parameter against provided one, and will throw an `UnauthorizedException` if the values do not match.
 
 #### Specific Providers
 
@@ -63,7 +69,6 @@ All right, so here's the fun part of the package: after you register the module,
 - add more providers
 - e2e testing
 - maybe a better API
-- allow for enhancers on the controller
 
 ## Contributing
 

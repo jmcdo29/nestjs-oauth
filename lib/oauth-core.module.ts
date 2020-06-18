@@ -5,6 +5,7 @@ import {
   HttpService,
   Module,
   Query,
+  Req,
 } from '@nestjs/common';
 import { createConfigurableDynamicRootModule } from '@golevelup/nestjs-modules';
 import {
@@ -18,6 +19,7 @@ import { OauthController } from './oauth.controller';
 import {
   OauthModuleOptions,
   OauthModuleProviderOptions,
+  OauthCodeInterface,
 } from './oauth.interface';
 import { OauthService } from './oauth.service';
 import {
@@ -60,9 +62,10 @@ export class OauthCoreModule extends createConfigurableDynamicRootModule<
             return this[service][serviceLoginFuncName]();
           };
           OauthController.prototype[controllerCallbackFunction] = function(
-            code: string,
+            query: OauthCodeInterface,
+            req: any,
           ) {
-            return this[service][serviceCallbackFuncName](code);
+            return this[service][serviceCallbackFuncName](query, req);
           };
           // SERVICE OVERRIDING
           OauthService.prototype[serviceLoginFuncName] = function() {
@@ -98,7 +101,8 @@ export class OauthCoreModule extends createConfigurableDynamicRootModule<
             OauthController,
             controllerCallbackFunction,
           );
-          Query(code)(OauthController.prototype, controllerCallbackFunction, 0);
+          Query()(OauthController.prototype, controllerCallbackFunction, 0);
+          Req()(OauthController.prototype, controllerCallbackFunction, 1);
         });
       },
       inject: [OAUTH_MODULE_OPTIONS, HttpService],
