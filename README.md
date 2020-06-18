@@ -56,6 +56,8 @@ The object that dictates how the Controller class for the `OauthModule`. Both `r
 
 > **NOTE**: if a state token is passed as a parameter, the `OauthService` method will check the returned state parameter against provided one, and will throw an `UnauthorizedException` if the values do not match.
 
+> **WARNING**: If no data modification happens on the return of `provide`, there will be a breaking error of the inability to convert a circularly structured JSON. This is intended.
+
 #### Specific Providers
 
 Each specific OAuth authority has their own provider values. These follow the values expected from the provider's OAuth documentation, usually changed from snake_case to camelCase. Intellisense should provide you with the options necessary. [Otherwise, you can look here](./lib/oauth.interface.ts)
