@@ -6,7 +6,8 @@ import { waitFor } from './utils';
 
 async function saveUser(user: any) {
   await waitFor(3000);
-  return user;
+  console.log(user.req);
+  return user.user;
 }
 
 @Module({
