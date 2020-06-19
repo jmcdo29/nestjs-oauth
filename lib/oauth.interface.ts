@@ -111,7 +111,7 @@ export interface CustomServiceOptions {
     client_secret: string;
     [index: string]: any;
   };
-  tokenHttpMethod: 'get' | 'post';
+  tokenHttpMethod?: 'get' | 'post';
 }
 
 interface CustomOauthModuleOptions extends OauthModuleOptionsBase {
