@@ -34,7 +34,10 @@ export interface ServiceOptions {
 
 interface OauthModuleOptionsBase {
   controller: ControllerOptions;
-  provide: (resp: { user: any; req: any }) => any;
+  provide: (resp: {
+    user: Record<string, any>;
+    req: Record<string, any>;
+  }) => any;
 }
 
 /**
@@ -88,12 +91,31 @@ interface GithubOauthModuleOptions extends OauthModuleOptionsBase {
 }
 
 /**
+ * C U S T O M   I N T E R F A C E
+ */
+
+export interface CustomServiceOptions {
+  loginUrl: string;
+  tokenUrl: string;
+  userUrl: string;
+  loginUrlParams: Record<string, any>;
+  tokenUrlParams: Record<string, any>;
+  tokenHttpMethod: 'get' | 'post';
+}
+
+interface CustomOauthModuleOptions extends OauthModuleOptionsBase {
+  name: string;
+  service: CustomServiceOptions;
+}
+
+/**
  * M O D U L E   O P T I O N S
  */
 
 export type OauthModuleProviderOptions =
   | GoogleOauthModuleOptions
-  | GithubOauthModuleOptions;
+  | GithubOauthModuleOptions
+  | CustomOauthModuleOptions;
 
 export interface OauthModuleOptions {
   authorities: OauthModuleProviderOptions[];
