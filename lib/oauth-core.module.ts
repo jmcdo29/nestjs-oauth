@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { createConfigurableDynamicRootModule } from '@golevelup/nestjs-modules';
 import {
-  code,
   loginUrl,
   OAUTH_MODULE_OPTIONS,
   service,

@@ -24,7 +24,17 @@ export const createGithubLoginUrl = (options: GithubServiceOptions): string => {
 export const createGithubUserFunction = (
   options: GithubServiceOptions,
   code: string,
-): any => {
+): {
+  url: string;
+  userUrl: string;
+  options: {
+    client_id: string;
+    client_secret: string;
+    code: string;
+    redirect_uri: string;
+    state: string;
+  };
+} => {
   return {
     url: github.tokenUrl,
     options: {
