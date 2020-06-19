@@ -1,15 +1,11 @@
 import { CustomServiceOptions } from '../oauth.interface';
 
 export const createCustomLoginUrl = (options: CustomServiceOptions): string => {
-  let queryString = '';
   const loginParams = options.loginUrlParams;
-  Object.keys(loginParams).forEach((key) => {
-    queryString += `${key}=${loginParams[key]}&`;
-  });
-  return `${options.loginUrl}?${queryString.substring(
-    0,
-    queryString.length - 1,
-  )}`;
+  const queryString = Object.keys(loginParams).map(
+    (key) => `${key}=${loginParams[key]}`,
+  );
+  return `${options.loginUrl}?${queryString.join('&')}`;
 };
 
 export const createCustomUserFunction = (
@@ -26,11 +22,18 @@ export const createCustomUserFunction = (
     state: string;
   };
 } => {
-  const tokenOpts = {};
-  const tokenParams = options.tokenUrlParams;
-  Object.keys(tokenParams).forEach((key) => {
-    tokenOpts[key] = tokenParams[key];
-  });
+  const { redirect_uri, client_id } = options.loginUrlParams;
+  const tokenOpts = { ...options.tokenUrlParams, redirect_uri, client_id };
+  if (options.tokenHttpMethod === 'get') {
+    const queryString =
+      Object.keys(tokenOpts)
+        .map((key) => `${key}=${tokenOpts[key]}`)
+        .join('&') + `&code=${code}`;
+    return {
+      url: options.tokenUrl + `?${queryString}`,
+      userUrl: options.userUrl,
+    } as any;
+  }
   return {
     url: options.tokenUrl,
     userUrl: options.userUrl,

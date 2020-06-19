@@ -68,6 +68,7 @@ async function saveUser(user: any) {
             },
             callback: {
               path: 'custom-google/callback',
+              decorators: [OgmaSkip()],
             },
           },
           service: {
@@ -83,10 +84,8 @@ async function saveUser(user: any) {
             },
             tokenHttpMethod: 'post',
             tokenUrlParams: {
-              client_id: process.env.GOOGLE_CLIENT,
               client_secret: process.env.GOOGLE_SECRET,
               grant_type: 'authorization_code',
-              redirect_uri: process.env.GOOGLE_CUSTOM_CALLBACK,
             },
           },
           provide: saveUser,

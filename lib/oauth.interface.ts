@@ -98,8 +98,19 @@ export interface CustomServiceOptions {
   loginUrl: string;
   tokenUrl: string;
   userUrl: string;
-  loginUrlParams: Record<string, any>;
-  tokenUrlParams: Record<string, any>;
+  loginUrlParams: {
+    client_id: string;
+    response_type: string;
+    redirect_uri?: string;
+    scope?: string;
+    state?: string;
+    [index: string]: any;
+  };
+  tokenUrlParams: {
+    grant_type: string;
+    client_secret: string;
+    [index: string]: any;
+  };
   tokenHttpMethod: 'get' | 'post';
 }
 
