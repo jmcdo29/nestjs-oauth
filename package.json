@@ -1,6 +1,6 @@
 {
   "name": "nestjs-oauth",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "An OAuth Module the mimics Passport's functionality without some of passport's wonkiness",
   "author": "Jay McDoniel <me@jaymcdoniel.dev>",
   "private": false,

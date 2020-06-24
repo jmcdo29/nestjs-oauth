@@ -1,3 +1,16 @@
+# [0.3.0](https://github.com/jmcdo29/nestjs-oauth/compare/0.2.1...0.3.0) (2020-06-24)
+
+### Features
+
+- **custom:** adds ability for integration with GET token urls ([1d7294c](https://github.com/jmcdo29/nestjs-oauth/commit/1d7294c63cfcd91bc85997767b6ca1db4c22589b))
+- **custom:** allows for basic custom oauth authority addition ([1a71219](https://github.com/jmcdo29/nestjs-oauth/commit/1a71219ed35f4f537930551fffc8aa13c3d4d9ee))
+- allows for decorator usage and access to req in `provide` ([797c320](https://github.com/jmcdo29/nestjs-oauth/commit/797c320a7ec360c053c29c3ac667551cf8659d9b))
+- allows for the use of all nest decorators ([304f047](https://github.com/jmcdo29/nestjs-oauth/commit/304f047eea42074b6dd4af1b9fbd820a9a5867ac))
+
+### BREAKING CHANGES
+
+- the `provide` method now has a different parameter type, from a simple object to a complex one.
+
 ## [0.2.1](https://github.com/jmcdo29/nestjs-oauth/compare/0.2.0...0.2.1) (2020-06-17)
 
 ### Bug Fixes
